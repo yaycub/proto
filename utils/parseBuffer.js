@@ -42,7 +42,7 @@ const getAmount = (userData, recordType) => {
     }, 0);
 };
 
-const parseDataForResponse = (globalData, userId) => {
+const parseJsonForResponse = (globalData, userId) => {
   const userData = globalData.filter(item => item.userId === userId);
   
   return {
@@ -64,6 +64,6 @@ balance for user ${parsedData.userID}=${parsedData.balance}`);
 
 module.exports = {
   parseBinaryToJson,
-  parseDataForResponse,
+  parseJsonForResponse,
   stringifyResponse
 };

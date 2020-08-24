@@ -2,16 +2,16 @@
 const fs = require('fs').promises;
 const {  
   parseBinaryToJson, 
-  parseDataForResponse, 
+  parseJsonForResponse, 
   stringifyResponse 
 } = require('./utils/parseBuffer');
 
 const protoParser = userID => {
   return fs.readFile('./txnlog.dat')
     .then(buf => parseBinaryToJson(buf))
-    .then(parsedData => parseDataForResponse(parsedData, userID))
+    .then(parsedData => parseJsonForResponse(parsedData, userID))
     .then(parsedResponse => stringifyResponse(parsedResponse))
-    .then(res => console.log(res))
+    .then(stringedRes => console.log(stringedRes))
     .catch(err => console.log(err));
 };
 
