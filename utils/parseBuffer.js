@@ -42,16 +42,28 @@ const getAmount = (userData, recordType) => {
     }, 0);
 };
 
-const parseDataForResponse = (globalData, userData) => ({
-  userID: userData[0].userId,
-  creditAmount: getAmount(globalData, 0).toFixed(2),
-  debitAmount: getAmount(globalData, 1).toFixed(2),
-  autoPayStarted: globalData.filter(item => item.recordType === 2).length,
-  autoPayEnded: globalData.filter(item => item.recordType === 3).length,
-  balance: (getAmount(userData, 0) - getAmount(userData, 1)).toFixed(2)
-});
+const parseDataForResponse = (globalData, userId) => {
+  const userData = globalData.filter(item => item.userId === userId);
+  
+  return {
+    userID: userData[0].userId,
+    creditAmount: getAmount(globalData, 0).toFixed(2),
+    debitAmount: getAmount(globalData, 1).toFixed(2),
+    autoPayStarted: globalData.filter(item => item.recordType === 2).length,
+    autoPayEnded: globalData.filter(item => item.recordType === 3).length,
+    balance: (getAmount(userData, 0) - getAmount(userData, 1)).toFixed(2)
+  };
+};
+
+const stringifyResponse = parsedData => (`
+total credit amount=${parsedData.creditAmount}
+total debit amount=${parsedData.debitAmount}
+autopays started=${parsedData.autoPayStarted}
+autopays ended=${parsedData.autoPayEnded}
+balance for user ${parsedData.userID}=${parsedData.balance}`);
 
 module.exports = {
   parseBinaryToJson,
-  parseDataForResponse
+  parseDataForResponse,
+  stringifyResponse
 };
