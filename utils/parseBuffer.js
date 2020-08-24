@@ -46,7 +46,7 @@ const parseJsonForResponse = (globalData, userId) => {
   const userData = globalData.filter(item => item.userId === userId);
   
   return {
-    userID: userData[0].userId,
+    userID: userId,
     creditAmount: getAmount(globalData, 0).toFixed(2),
     debitAmount: getAmount(globalData, 1).toFixed(2),
     autoPayStarted: globalData.filter(item => item.recordType === 2).length,
