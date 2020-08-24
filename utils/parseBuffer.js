@@ -1,4 +1,6 @@
 const amountIncluded = [0, 1];
+const ROW_SIZE_WITH_AMOUNT = 21;
+const ROW_SIZE_WITHOUT_AMOUNT = 13;
 
 const parseRowWithAmount = (buf) => ({
   recordType: buf.readUInt8(0),
@@ -14,21 +16,19 @@ const parseRowWithoutAmount = (buf) => ({
   amount: 0
 });
 
+const getRowParser = (buf, offset) => {
+  if(amountIncluded.includes(buf.readUInt8(offset))) return { rowSize: ROW_SIZE_WITH_AMOUNT, rowParser: parseRowWithAmount };
+  return { rowSize: ROW_SIZE_WITHOUT_AMOUNT, rowParser: parseRowWithoutAmount };
+};
+
 const parseBinaryToJson = (buf) => {
   const recordAmount = buf.readUInt32BE(5);
   let offset = 9;
   return [...Array(recordAmount)].map(() => {
-
-    if(amountIncluded.includes(buf.readUInt8(offset))){
-      const bufferRow = buf.slice(offset, offset + 21);
-      const parsedRow = parseRowWithAmount(bufferRow, offset);
-      offset = offset + 21;
-      return parsedRow;
-    }
-
-    const bufferRow = buf.slice(offset, offset + 13);
-    const parsedRow = parseRowWithoutAmount(bufferRow, offset);
-    offset = offset + 13;
+    const { rowSize, rowParser } = getRowParser(buf, offset);
+    
+    const parsedRow = rowParser(buf.slice(offset, offset + rowSize));
+    offset += rowSize;
     return parsedRow;
 
   });
